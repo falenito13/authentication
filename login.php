@@ -4,17 +4,18 @@ require_once 'connect.php';
 
 if (isset($_POST['login'])) {
     $username = !empty($_POST['username']) ? trim($_POST['username']) : null;
+    $email = !empty($_POST['email']) ? trim($_POST['email']) : null;
     $passwordAttempt = !empty($_POST['password']) ? trim($_POST['password']) : null;
-    $sql = "SELECT user_id,username,password from users where username=:username";
+    $sql = "SELECT user_id,username,email,password,passwordrepeat from users where username=:username AND email=:email";
     $stmt = $pdo->prepare($sql);
     $stmt->bindValue(':username', $username);
+    $stmt->bindValue(':email', $email);
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
     if ($user === false) {
-        die ('Incorrect username or password1');
+        die ('Incorrect username or password');
     } else {
         $validPassword = password_verify($passwordAttempt, $user['password']);
-        print_r([$validPassword]);
         if ($validPassword) {
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['logged_in'] = time();
