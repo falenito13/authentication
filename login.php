@@ -5,22 +5,30 @@ require_once 'connect.php';
 if (isset($_POST['login'])) {
     $username = !empty($_POST['username']) ? trim($_POST['username']) : null;
     $password = !empty($_POST['password']) ? trim($_POST['password']) : null;
-    $sql = "SELECT * from users where username=:username AND password=:password";
+    $sql = "SELECT username from users where username=:username";
 
     $stmt = $pdo->prepare($sql);
     $stmt->bindValue(':username', $username);
-    $stmt->bindValue(':password', md5($password));
     $stmt->execute();
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($user===false)  {
+
+    if ($user === false) {
         die ('Incorrect username or password');
     } else {
-        $_SESSION['USER_DATA'] = $user;
-        echo "Hello User:".$_SESSION['USER_DATA']['username'];
+        $validPassword = password_verify($password, password_hash($password,PASSWORD_BCRYPT));
+        if ($validPassword) {
+
+
+            $_SESSION['USER_DATA'] = $user;
+            echo "Hello User:" . $_SESSION['USER_DATA']['username'];
+            exit;
+        }
+        else {
+            die ('Incorrect username or password1');
         }
     }
-exit();
+}
 ?>
 <!DOCTYPE html>
 <html>

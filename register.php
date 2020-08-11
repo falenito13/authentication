@@ -26,7 +26,7 @@ if (isset($_POST['register'])){
     }
     //uketebs hashs usaprtxoebistvis
 
-    $password = md5($password);
+    $password = password_hash($password,PASSWORD_BCRYPT);
     $passwordrepeat = password_hash($passwordrepeat,PASSWORD_BCRYPT);
     $sql = "INSERT INTO users (username,email,password) values (:username,:email,:password)";
     $stmt = $pdo->prepare($sql);
